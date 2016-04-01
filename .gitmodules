@@ -1,0 +1,3 @@
+[submodule "Android/ykneo-openpgp"]
+	path = Android/ykneo-openpgp
+	url = https://github.com/Yubico/ykneo-openpgp
