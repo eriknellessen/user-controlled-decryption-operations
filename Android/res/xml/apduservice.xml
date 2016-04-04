@@ -1,0 +1,8 @@
+<host-apdu-service xmlns:android="http://schemas.android.com/apk/res/android"
+           android:description="@string/service_desc"
+           android:requireDeviceUnlock="false">
+    <aid-group android:description="@string/aid_description"
+               android:category="other">
+        <aid-filter android:name="@string/ykneo_openpgpapplet_aid"/>
+    </aid-group>
+</host-apdu-service>
