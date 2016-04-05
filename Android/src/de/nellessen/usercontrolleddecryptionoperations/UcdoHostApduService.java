@@ -3,6 +3,7 @@ package de.nellessen.usercontrolleddecryptionoperations;
 import android.content.Context;
 import android.os.Bundle;
 import android.nfc.cardemulation.HostApduService;
+import android.util.Log;
 
 import com.licel.jcardsim.base.Simulator;
 import com.licel.jcardsim.base.SimulatorRuntime;
@@ -23,7 +24,7 @@ public class UcdoHostApduService extends HostApduService {
 		//Create simulator, install applet and select it
 		simulator = new Simulator(new SimulatorRuntime());
 
-		String appletAidString = appContext.getResources().getString(R.string.ykneo_openpgpapplet_aid);
+		String appletAidString = appContext.getResources().getString(R.string.ykneo_openpgpapplet_aid_long);
 		AID appletAid = AIDUtil.create(appletAidString);
 		try{
 			byte[] aidAsBytes = Converting.hexStringToByteArray(appletAidString);
@@ -55,7 +56,10 @@ public class UcdoHostApduService extends HostApduService {
 
 	@Override
 	public byte[] processCommandApdu(byte[] apdu, Bundle extras) {
-		return simulator.transmitCommand(apdu);
+		Log.d(MainActivity.Tag, "Received APDU (" + apdu.length + " bytes): " + Converting.byteArrayToHexString(apdu));
+		byte [] response = simulator.transmitCommand(apdu);
+		Log.d(MainActivity.Tag, "Sending APDU (" + response.length + " bytes): " + Converting.byteArrayToHexString(response));
+		return response;
 	}
 
 	@Override

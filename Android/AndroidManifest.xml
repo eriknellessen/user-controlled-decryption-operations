@@ -24,7 +24,7 @@
 		</activity>
 
 		<service
-		android:name="de.nellessen.usercontrolleddecryptionoperations.ucdoHostApduService"
+		android:name="de.nellessen.usercontrolleddecryptionoperations.ProcessCommandApduWrapper"
 		android:exported="true"
 		android:permission="android.permission.BIND_NFC_SERVICE" >
 		<intent-filter>

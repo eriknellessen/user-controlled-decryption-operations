@@ -7,9 +7,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.nfc.NfcManager;
 import android.nfc.NfcAdapter;
+import android.view.WindowManager;
 
 public class MainActivity extends Activity{
 
+	public static String Tag = "UserControlledDecryptionOperations";
 	private UcdoHostApduService MUcdoHostApduService;
 
 	/** Called when the activity is first created. */
@@ -17,6 +19,8 @@ public class MainActivity extends Activity{
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		checkNfcEnabled();
 

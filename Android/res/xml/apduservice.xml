@@ -3,6 +3,6 @@
            android:requireDeviceUnlock="false">
     <aid-group android:description="@string/aid_description"
                android:category="other">
-        <aid-filter android:name="@string/ykneo_openpgpapplet_aid"/>
+        <aid-filter android:name="@string/ykneo_openpgpapplet_aid_short"/>
     </aid-group>
 </host-apdu-service>
