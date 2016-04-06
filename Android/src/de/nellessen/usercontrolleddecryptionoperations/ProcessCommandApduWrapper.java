@@ -8,7 +8,7 @@ public class ProcessCommandApduWrapper extends HostApduService{
 	UcdoHostApduService MUcdoHostApduService;
 
 	public ProcessCommandApduWrapper(){
-		MUcdoHostApduService = UcdoHostApduService.getInstance(this);
+		MUcdoHostApduService = UcdoHostApduService.getInstance();
 	}
 
 	@Override
