@@ -11,11 +11,18 @@ import com.licel.jcardsim.utils.AIDUtil;
 import javacard.framework.AID;
 
 import openpgpcard.OpenPGPApplet;
+import javacard.framework.ISO7816;
+import java.nio.ByteBuffer;
+import javacard.framework.Util;
+import java.io.UnsupportedEncodingException;
 
 public class UcdoHostApduService extends HostApduService {
 
 	Context context;
 	Simulator simulator;
+
+	private static final String SignatureAuthorizationRequest = "Compute signature?";
+	private static final String DecryptionAuthorizationRequestBeginning = "Decrypt file? Metadata: ";
 
 	//Class implemented as singleton, so it can be used by different activities
 	private static UcdoHostApduService instance;
@@ -56,12 +63,40 @@ public class UcdoHostApduService extends HostApduService {
 
 	@Override
 	public byte[] processCommandApdu(byte[] apdu, Bundle extras) {
-		//Just for testing
-		boolean askForOkResult = ((AskForOk) context).askForOk(Converting.byteArrayToHexString(apdu));
-		Log.d(MainActivity.Tag, "askForOkResult: " + askForOkResult);
-
 		Log.d(MainActivity.Tag, "Received APDU (" + apdu.length + " bytes): " + Converting.byteArrayToHexString(apdu));
 		byte [] response = simulator.transmitCommand(apdu);
+
+		//TODO: Show decrypted meta data
+		// PERFORM SECURITY OPERATION
+		if(apdu[ISO7816.OFFSET_INS] == (byte) 0x2A){
+			boolean askForOkResult = false;
+			short p1p2 = Util.makeShort(apdu[ISO7816.OFFSET_P1], apdu[ISO7816.OFFSET_P2]);
+			// COMPUTE DIGITAL SIGNATURE
+			if (p1p2 == (short) 0x9E9A) {
+				askForOkResult = ((AskForOk) context).askForOk(SignatureAuthorizationRequest);
+			}
+			// DECIPHER
+			else if (p1p2 == (short) 0x8086) {
+				byte [] metaDataAsByteArray = new byte [response.length - 2];
+				System.arraycopy(response, 0, metaDataAsByteArray, 0, response.length - 2);
+				String metaDataAsString = new String("");
+				try{
+					metaDataAsString = new String(metaDataAsByteArray, "UTF-8");
+				} catch (UnsupportedEncodingException e){
+					e.printStackTrace();
+					System.exit(1);
+				}
+				String DecryptionAuthorizationRequest = DecryptionAuthorizationRequestBeginning + metaDataAsByteArray;
+				askForOkResult = ((AskForOk) context).askForOk(DecryptionAuthorizationRequest);
+			}
+			Log.d(MainActivity.Tag, "askForOkResult: " + askForOkResult);
+			if(askForOkResult == false){
+				ByteBuffer statusWordBuffer = ByteBuffer.allocate(2);
+				statusWordBuffer.putShort(ISO7816.SW_SECURITY_STATUS_NOT_SATISFIED);
+				response = statusWordBuffer.array();
+			}
+		}
+
 		Log.d(MainActivity.Tag, "Sending APDU (" + response.length + " bytes): " + Converting.byteArrayToHexString(response));
 		return response;
 	}
