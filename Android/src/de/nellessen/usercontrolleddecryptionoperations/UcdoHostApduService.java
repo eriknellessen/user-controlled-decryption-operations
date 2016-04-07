@@ -56,6 +56,10 @@ public class UcdoHostApduService extends HostApduService {
 
 	@Override
 	public byte[] processCommandApdu(byte[] apdu, Bundle extras) {
+		//Just for testing
+		boolean askForOkResult = ((AskForOk) context).askForOk(Converting.byteArrayToHexString(apdu));
+		Log.d(MainActivity.Tag, "askForOkResult: " + askForOkResult);
+
 		Log.d(MainActivity.Tag, "Received APDU (" + apdu.length + " bytes): " + Converting.byteArrayToHexString(apdu));
 		byte [] response = simulator.transmitCommand(apdu);
 		Log.d(MainActivity.Tag, "Sending APDU (" + response.length + " bytes): " + Converting.byteArrayToHexString(response));
