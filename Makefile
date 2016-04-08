@@ -1,4 +1,9 @@
 
+all: android_app encrypting_cloud_storages
+
+android_app:
+	make -C Android
+
 encrypting_cloud_storages:
 	git submodule init
 	git submodule update
@@ -7,6 +12,3 @@ encrypting_cloud_storages:
 	cd -
 	make -C encrypting-cloud-storages/fuseecs
 	make -C encrypting-cloud-storages/share_a_folder
-
-android_app:
-	make -C Android

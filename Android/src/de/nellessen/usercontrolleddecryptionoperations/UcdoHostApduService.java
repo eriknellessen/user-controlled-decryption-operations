@@ -14,6 +14,7 @@ import openpgpcard.OpenPGPApplet;
 import javacard.framework.ISO7816;
 import java.nio.ByteBuffer;
 import javacard.framework.Util;
+import java.util.Arrays;
 import java.io.UnsupportedEncodingException;
 
 public class UcdoHostApduService extends HostApduService {
@@ -22,7 +23,7 @@ public class UcdoHostApduService extends HostApduService {
 	Simulator simulator;
 
 	private static final String SignatureAuthorizationRequest = "Compute signature?";
-	private static final String DecryptionAuthorizationRequestBeginning = "Decrypt file? Metadata: ";
+	private static final String DecryptionAuthorizationRequestBeginning = "Decrypt folder? Metadata: Path: ";
 
 	//Class implemented as singleton, so it can be used by different activities
 	private static UcdoHostApduService instance;
@@ -65,8 +66,12 @@ public class UcdoHostApduService extends HostApduService {
 	public byte[] processCommandApdu(byte[] apdu, Bundle extras) {
 		Log.d(MainActivity.Tag, "Received APDU (" + apdu.length + " bytes): " + Converting.byteArrayToHexString(apdu));
 		byte [] response = simulator.transmitCommand(apdu);
+		Log.d(MainActivity.Tag, "Applet responded APDU (" + response.length + " bytes): " + Converting.byteArrayToHexString(response));
 
+		/*
 		//TODO: Show decrypted meta data
+		//TODO: Find out about decipher command in ISO7816 part 8. It seems like the plain text is in the response
+		//to the second command APDU sent by the PC.
 		// PERFORM SECURITY OPERATION
 		if(apdu[ISO7816.OFFSET_INS] == (byte) 0x2A){
 			boolean askForOkResult = false;
@@ -77,17 +82,23 @@ public class UcdoHostApduService extends HostApduService {
 			}
 			// DECIPHER
 			else if (p1p2 == (short) 0x8086) {
-				byte [] metaDataAsByteArray = new byte [response.length - 2];
-				System.arraycopy(response, 0, metaDataAsByteArray, 0, response.length - 2);
-				String metaDataAsString = new String("");
-				try{
-					metaDataAsString = new String(metaDataAsByteArray, "UTF-8");
-				} catch (UnsupportedEncodingException e){
-					e.printStackTrace();
-					System.exit(1);
+				//Find separator and extract path
+				int pathLength = Arrays.binarySearch(response, 0, response.length - 2, (byte) 0x01);
+				if(pathLength > 0){
+					byte [] metaDataAsByteArray = new byte [pathLength];
+					System.arraycopy(response, 0, metaDataAsByteArray, 0, pathLength);
+					String metaDataAsString = new String("");
+					try{
+						metaDataAsString = new String(metaDataAsByteArray, "US-ASCII");
+					} catch (UnsupportedEncodingException e){
+						e.printStackTrace();
+						System.exit(1);
+					}
+					String DecryptionAuthorizationRequest = DecryptionAuthorizationRequestBeginning + metaDataAsString;
+					askForOkResult = ((AskForOk) context).askForOk(DecryptionAuthorizationRequest);
+				} else{
+					askForOkResult = false;
 				}
-				String DecryptionAuthorizationRequest = DecryptionAuthorizationRequestBeginning + metaDataAsByteArray;
-				askForOkResult = ((AskForOk) context).askForOk(DecryptionAuthorizationRequest);
 			}
 			Log.d(MainActivity.Tag, "askForOkResult: " + askForOkResult);
 			if(askForOkResult == false){
@@ -96,6 +107,7 @@ public class UcdoHostApduService extends HostApduService {
 				response = statusWordBuffer.array();
 			}
 		}
+		*/
 
 		Log.d(MainActivity.Tag, "Sending APDU (" + response.length + " bytes): " + Converting.byteArrayToHexString(response));
 		return response;
