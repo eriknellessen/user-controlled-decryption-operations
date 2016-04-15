@@ -2,7 +2,6 @@ package de.nellessen.usercontrolleddecryptionoperations;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.nfc.cardemulation.HostApduService;
 import android.util.Log;
 
 import com.licel.jcardsim.base.Simulator;
@@ -17,7 +16,7 @@ import javacard.framework.Util;
 import java.util.Arrays;
 import java.io.UnsupportedEncodingException;
 
-public class UcdoHostApduService extends HostApduService {
+public class UcdoHostApduService{
 
 	Context context;
 	Simulator simulator;
@@ -62,18 +61,15 @@ public class UcdoHostApduService extends HostApduService {
 		return UcdoHostApduService.instance;
 	}
 
-	@Override
 	public byte[] processCommandApdu(byte[] apdu, Bundle extras) {
 		Log.d(MainActivity.Tag, "Received APDU (" + apdu.length + " bytes): " + Converting.byteArrayToHexString(apdu));
 		byte [] response = simulator.transmitCommand(apdu);
 		Log.d(MainActivity.Tag, "Applet responded APDU (" + response.length + " bytes): " + Converting.byteArrayToHexString(response));
 
-		/*
 		//TODO: Show decrypted meta data
-		//TODO: Find out about decipher command in ISO7816 part 8. It seems like the plain text is in the response
-		//to the second command APDU sent by the PC.
 		// PERFORM SECURITY OPERATION
-		if(apdu[ISO7816.OFFSET_INS] == (byte) 0x2A){
+		//If that was the last APDU concerning a decryption command
+		if(apdu[ISO7816.OFFSET_CLA] == (byte) 0x00 && apdu[ISO7816.OFFSET_INS] == (byte) 0x2A){
 			boolean askForOkResult = false;
 			short p1p2 = Util.makeShort(apdu[ISO7816.OFFSET_P1], apdu[ISO7816.OFFSET_P2]);
 			// COMPUTE DIGITAL SIGNATURE
@@ -83,8 +79,9 @@ public class UcdoHostApduService extends HostApduService {
 			// DECIPHER
 			else if (p1p2 == (short) 0x8086) {
 				//Find separator and extract path
-				int pathLength = Arrays.binarySearch(response, 0, response.length - 2, (byte) 0x01);
-				if(pathLength > 0){
+				//int pathLength = Arrays.binarySearch(response, 0, response.length - 2, (byte) 0x01);
+				int pathLength = response.length;
+				//if(pathLength > 0){
 					byte [] metaDataAsByteArray = new byte [pathLength];
 					System.arraycopy(response, 0, metaDataAsByteArray, 0, pathLength);
 					String metaDataAsString = new String("");
@@ -96,9 +93,9 @@ public class UcdoHostApduService extends HostApduService {
 					}
 					String DecryptionAuthorizationRequest = DecryptionAuthorizationRequestBeginning + metaDataAsString;
 					askForOkResult = ((AskForOk) context).askForOk(DecryptionAuthorizationRequest);
-				} else{
+				/*} else{
 					askForOkResult = false;
-				}
+				}*/
 			}
 			Log.d(MainActivity.Tag, "askForOkResult: " + askForOkResult);
 			if(askForOkResult == false){
@@ -107,13 +104,11 @@ public class UcdoHostApduService extends HostApduService {
 				response = statusWordBuffer.array();
 			}
 		}
-		*/
 
 		Log.d(MainActivity.Tag, "Sending APDU (" + response.length + " bytes): " + Converting.byteArrayToHexString(response));
 		return response;
 	}
 
-	@Override
 	public void onDeactivated(int reason) {
 		return;
 	}
