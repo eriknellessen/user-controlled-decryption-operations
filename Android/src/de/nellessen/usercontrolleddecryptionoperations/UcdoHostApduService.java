@@ -95,7 +95,7 @@ public class UcdoHostApduService{
 				if(!hashValueCorrect(response)){
 					askForOkResult = false;
 				}
-				if(MetaDataComplete = false){
+				if(MetaDataComplete == false){
 					askForOkResult = false;
 				}
 			}
@@ -126,6 +126,7 @@ public class UcdoHostApduService{
 	byte [] saveMetaData(byte [] apdu){
 		byte [] tempByteArray;
 		if(MetaDataComplete == true){
+			Log.d(MainActivity.Tag, "Creating new meta data array.");
 			tempByteArray = new byte [apdu[ISO7816.OFFSET_LC]];
 			MetaDataComplete = false;
 		} else {
@@ -153,6 +154,7 @@ public class UcdoHostApduService{
 			e.printStackTrace();
 			System.exit(1);
 		}
+		Log.d(MainActivity.Tag, "Calculating hash value from the following " + MetaDataAsByteArray.length + " bytes: " + Converting.byteArrayToHexString(MetaDataAsByteArray));
 		md.update(MetaDataAsByteArray, 0, MetaDataAsByteArray.length);
 		byte [] calculatedHash = md.digest();
 
