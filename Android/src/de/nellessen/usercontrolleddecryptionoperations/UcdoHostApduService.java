@@ -16,20 +16,27 @@ import javacard.framework.Util;
 import java.util.Arrays;
 import java.io.UnsupportedEncodingException;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 public class UcdoHostApduService{
 
-	Context context;
-	Simulator simulator;
+	Context MContext;
+	Simulator MSimulator;
 
 	private static final String SignatureAuthorizationRequest = "Compute signature?";
 	private static final String DecryptionAuthorizationRequestBeginning = "Decrypt folder? Metadata: Path: ";
+	byte [] MetaDataAsByteArray;
+	boolean MetaDataComplete = true;
+	boolean AcceptDecryption = false;
+	private static final String HashAlgorithm = "SHA-256";
 
 	//Class implemented as singleton, so it can be used by different activities
 	private static UcdoHostApduService instance;
 
 	private UcdoHostApduService(Context appContext) {
 		//Create simulator, install applet and select it
-		simulator = new Simulator(new SimulatorRuntime());
+		MSimulator = new Simulator(new SimulatorRuntime());
 
 		String appletAidString = appContext.getResources().getString(R.string.ykneo_openpgpapplet_aid_long);
 		AID appletAid = AIDUtil.create(appletAidString);
@@ -38,16 +45,16 @@ public class UcdoHostApduService{
 			byte[] installationParameters = new byte[appletAidString.length() + 1];
 			installationParameters[0] = (byte) aidAsBytes.length;
 			System.arraycopy(aidAsBytes, 0, installationParameters, 1, aidAsBytes.length);
-			simulator.installApplet(appletAid, OpenPGPApplet.class, installationParameters, (short) 0, (byte) installationParameters.length);
+			MSimulator.installApplet(appletAid, OpenPGPApplet.class, installationParameters, (short) 0, (byte) installationParameters.length);
 		} catch(Exception e){
 			e.printStackTrace();
 			System.out.println("Could not install the applet.");
 			System.exit(-1);
 		}
 
-		simulator.selectApplet(appletAid);
+		MSimulator.selectApplet(appletAid);
 
-		this.context = appContext;
+		this.MContext = appContext;
 	}
 
 	public static UcdoHostApduService getInstance(Context appContext) {
@@ -61,41 +68,36 @@ public class UcdoHostApduService{
 		return UcdoHostApduService.instance;
 	}
 
-	public byte[] processCommandApdu(byte[] apdu, Bundle extras) {
+	public byte [] processCommandApdu(byte [] apdu, Bundle extras) {
 		Log.d(MainActivity.Tag, "Received APDU (" + apdu.length + " bytes): " + Converting.byteArrayToHexString(apdu));
-		byte [] response = simulator.transmitCommand(apdu);
-		Log.d(MainActivity.Tag, "Applet responded APDU (" + response.length + " bytes): " + Converting.byteArrayToHexString(response));
+		byte [] response;
+		//Save meta data. According to ISO7816-4, 0x23 is not used.
+		if(apdu[ISO7816.OFFSET_INS] == 0x23){
+			response = saveMetaData(apdu);
+		} else {
+			response = MSimulator.transmitCommand(apdu);
+			Log.d(MainActivity.Tag, "Applet responded APDU (" + response.length + " bytes): " + Converting.byteArrayToHexString(response));
+		}
 
-		//TODO: Show decrypted meta data
 		// PERFORM SECURITY OPERATION
-		//If that was the last APDU concerning a decryption command
-		if(apdu[ISO7816.OFFSET_CLA] == (byte) 0x00 && apdu[ISO7816.OFFSET_INS] == (byte) 0x2A){
+		//If that was the last APDU concerning a decryption/signature command
+		if(apdu[ISO7816.OFFSET_CLA] == ISO7816.CLA_ISO7816 && apdu[ISO7816.OFFSET_INS] == (byte) 0x2A){
 			boolean askForOkResult = false;
 			short p1p2 = Util.makeShort(apdu[ISO7816.OFFSET_P1], apdu[ISO7816.OFFSET_P2]);
 			// COMPUTE DIGITAL SIGNATURE
 			if (p1p2 == (short) 0x9E9A) {
-				askForOkResult = ((AskForOk) context).askForOk(SignatureAuthorizationRequest);
+				askForOkResult = ((AskForOk) MContext).askForOk(SignatureAuthorizationRequest);
 			}
 			// DECIPHER
 			else if (p1p2 == (short) 0x8086) {
-				//Find separator and extract path
-				//int pathLength = Arrays.binarySearch(response, 0, response.length - 2, (byte) 0x01);
-				int pathLength = response.length;
-				//if(pathLength > 0){
-					byte [] metaDataAsByteArray = new byte [pathLength];
-					System.arraycopy(response, 0, metaDataAsByteArray, 0, pathLength);
-					String metaDataAsString = new String("");
-					try{
-						metaDataAsString = new String(metaDataAsByteArray, "US-ASCII");
-					} catch (UnsupportedEncodingException e){
-						e.printStackTrace();
-						System.exit(1);
-					}
-					String DecryptionAuthorizationRequest = DecryptionAuthorizationRequestBeginning + metaDataAsString;
-					askForOkResult = ((AskForOk) context).askForOk(DecryptionAuthorizationRequest);
-				/*} else{
+				askForOkResult = AcceptDecryption;
+				AcceptDecryption = false;
+				if(!hashValueCorrect(response)){
 					askForOkResult = false;
-				}*/
+				}
+				if(MetaDataComplete = false){
+					askForOkResult = false;
+				}
 			}
 			Log.d(MainActivity.Tag, "askForOkResult: " + askForOkResult);
 			if(askForOkResult == false){
@@ -107,6 +109,65 @@ public class UcdoHostApduService{
 
 		Log.d(MainActivity.Tag, "Sending APDU (" + response.length + " bytes): " + Converting.byteArrayToHexString(response));
 		return response;
+	}
+
+	void getUserDecision(){
+		String metaDataAsString = new String("");
+		try{
+			metaDataAsString = new String(MetaDataAsByteArray, "US-ASCII");
+		} catch (UnsupportedEncodingException e){
+			e.printStackTrace();
+			System.exit(1);
+		}
+		String DecryptionAuthorizationRequest = DecryptionAuthorizationRequestBeginning + metaDataAsString;
+		AcceptDecryption = ((AskForOk) MContext).askForOk(DecryptionAuthorizationRequest);
+	}
+
+	byte [] saveMetaData(byte [] apdu){
+		byte [] tempByteArray;
+		if(MetaDataComplete == true){
+			tempByteArray = new byte [apdu[ISO7816.OFFSET_LC]];
+			MetaDataComplete = false;
+		} else {
+			tempByteArray = new byte [MetaDataAsByteArray.length + apdu[ISO7816.OFFSET_LC]];
+		}
+		System.arraycopy(apdu, ISO7816.OFFSET_CDATA, tempByteArray, tempByteArray.length - apdu[ISO7816.OFFSET_LC], apdu[ISO7816.OFFSET_LC]);
+		MetaDataAsByteArray = tempByteArray;
+
+		if(apdu[ISO7816.OFFSET_CLA] == ISO7816.CLA_ISO7816){
+			MetaDataComplete = true;
+			getUserDecision();
+		}
+
+		ByteBuffer statusWordBuffer = ByteBuffer.allocate(2);
+		statusWordBuffer.putShort(ISO7816.SW_NO_ERROR);
+		return statusWordBuffer.array();
+	}
+
+	boolean hashValueCorrect(byte [] responseApdu){
+		//Calculate hash from the seen meta data
+		MessageDigest md = null;
+		try{
+			md = MessageDigest.getInstance(HashAlgorithm);
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+			System.exit(1);
+		}
+		md.update(MetaDataAsByteArray, 0, MetaDataAsByteArray.length);
+		byte [] calculatedHash = md.digest();
+
+		//Get decrypted hash value from apdu
+		byte [] decryptedHash = new byte [calculatedHash.length];
+		System.arraycopy(responseApdu, 0, decryptedHash, 0, calculatedHash.length);
+
+		//Compare hashes
+		Log.d(MainActivity.Tag, "Calculated Hash: " + Converting.byteArrayToHexString(calculatedHash));
+		Log.d(MainActivity.Tag, "Decrypted Hash: " + Converting.byteArrayToHexString(decryptedHash));
+		if(Arrays.equals(calculatedHash, decryptedHash)){
+			return true;
+		}
+
+		return false;
 	}
 
 	public void onDeactivated(int reason) {
