@@ -146,6 +146,7 @@ public class UcdoHostApduService{
 	}
 
 	boolean hashValueCorrect(byte [] responseApdu){
+		//TODO: Check, if apdu has status word 0x9000
 		//Calculate hash from the seen meta data
 		MessageDigest md = null;
 		try{
