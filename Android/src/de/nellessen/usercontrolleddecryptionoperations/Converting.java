@@ -15,14 +15,19 @@ public class Converting {
 
 	//From http://stackoverflow.com/questions/9655181/how-to-convert-a-byte-array-to-a-hex-string-in-java
 	final protected static char[] hexArray = "0123456789ABCDEF".toCharArray();
-	public static String byteArrayToHexString(byte[] bytes) {
-		char[] hexChars = new char[bytes.length * 2];
+	public static String byteArrayToHexString(byte [] bytes) {
+		char [] hexChars = new char[bytes.length * 2];
 		for ( int j = 0; j < bytes.length; j++ ) {
 			int v = bytes[j] & 0xFF;
 			hexChars[j * 2] = hexArray[v >>> 4];
 			hexChars[j * 2 + 1] = hexArray[v & 0x0F];
 		}
 		return new String(hexChars);
+	}
+
+	public static short getStatusWordFromApdu(byte [] apdu){
+		//From http://stackoverflow.com/questions/12199487/converting-from-byte-array-to-short-producing-wrong-negative-value
+		return (short)((apdu[apdu.length - 2] << 8) + (apdu[apdu.length - 1] & 0xff));
 	}
 
 }

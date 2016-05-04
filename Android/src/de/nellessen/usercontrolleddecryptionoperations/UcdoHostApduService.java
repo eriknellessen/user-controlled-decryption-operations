@@ -146,7 +146,6 @@ public class UcdoHostApduService{
 	}
 
 	boolean hashValueCorrect(byte [] responseApdu){
-		//TODO: Check, if apdu has status word 0x9000
 		//Calculate hash from the seen meta data
 		MessageDigest md = null;
 		try{
@@ -160,6 +159,11 @@ public class UcdoHostApduService{
 		byte [] calculatedHash = md.digest();
 
 		//Get decrypted hash value from apdu
+		//Check, if decryption was successful
+		//TODO: Check, if this works as expected.
+		if(responseApdu.length - 2 < calculatedHash.length || Converting.getStatusWordFromApdu(responseApdu) != ISO7816.SW_NO_ERROR){
+			return false;
+		}
 		byte [] decryptedHash = new byte [calculatedHash.length];
 		System.arraycopy(responseApdu, 0, decryptedHash, 0, calculatedHash.length);
 
