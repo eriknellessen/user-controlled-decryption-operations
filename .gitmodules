@@ -3,5 +3,5 @@
 	url = https://github.com/Yubico/ykneo-openpgp
 [submodule "encrypting-cloud-storages"]
 	path = encrypting-cloud-storages
-	url = https://eriknellessen@bitbucket.org/eriknellessen/encrypting-cloud-storages.git
+	url = https://github.com/eriknellessen/encrypting-cloud-storages.git
 	branch = user-controlled-decryption-operations
