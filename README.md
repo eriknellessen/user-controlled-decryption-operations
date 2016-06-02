@@ -70,9 +70,10 @@ bin/start_fuseecs.sh
 
 This must not be done before starting the transparent client-side encryption.
 
-To start Dropbox, first switch to the user Dropbox. Then start the program:
+We need to share our display, so the user Dropbox can use it. We then switch to the user Dropbox and start the program:
 
 ```sh
+xhost +
 su Dropbox
 /home/user/.dropbox-dist/dropbox-lnx.$PLATFORM-$VERSION/dropbox
 ```
