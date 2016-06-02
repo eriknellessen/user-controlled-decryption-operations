@@ -63,6 +63,7 @@ This needs to be done before starting Dropbox.
 To start the transparent client-side encryption, execute the following command:
 
 ```sh
+cd encrypting-cloud-storages/build
 bin/start_fuseecs.sh
 ```
 
@@ -79,14 +80,16 @@ su Dropbox
 
 ## Sharing files
 
-For sharing a folder, execute the following command:
+For sharing a folder, execute the following commands:
 
 ```sh
+cd encrypting-cloud-storages/build
 bin/start_share_a_folder.sh $FOLDER $OPENPGP_FINGERPRINT
 ```
 
-For example, the command could look like this:
+For example, the commands could look like this:
 ```sh
+cd encrypting-cloud-storages/build
 bin/start_share_a_folder.sh /home/user/Dropbox/folder_to_share A6506F46
 ```
 
