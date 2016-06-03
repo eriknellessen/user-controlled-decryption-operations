@@ -25,4 +25,4 @@ make install
 
 # Using
 
-To use the App, follow the procedure described [here](https://github.com/eriknellessen/user-controlled-decryption-operations/README.md).
+To use the App, follow the procedure described [here](https://github.com/eriknellessen/user-controlled-decryption-operations/#setup).
