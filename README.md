@@ -45,25 +45,29 @@ You can use `gpg` to generate/import the key. For a tutorial on importing keys t
 
 We need to configure OpenSC, so it chooses the right driver to communicate with our Android smartphone. To do so, add the following lines to the file `/etc/opensc/opensc.conf`:
 
-> card_drivers = openpgp-modified, internal;
-
-> card_driver openpgp-modified {
+```
+card_drivers = openpgp-modified, internal;
+```
+```
+card_driver openpgp-modified {
 	# The location of the driver library
 	module = /path/to/the/build/directory/lib/card-openpgp-modified.so;
 }
-
-> card_atr 3b:80:80:01:01 {
+```
+```
+card_atr 3b:80:80:01:01 {
 	driver = "openpgp-modified";
 }
+```
 
 On a 64 Bit system, you might need to change the path from
-
-> /path/to/the/build/directory/lib/card-openpgp-modified.so
-
+```
+/path/to/the/build/directory/lib/card-openpgp-modified.so
+```
 to
-
-> /path/to/the/build/directory/lib64/card-openpgp-modified.so
-
+```
+/path/to/the/build/directory/lib64/card-openpgp-modified.so
+```
 
 ### Setting up Dropbox
 
