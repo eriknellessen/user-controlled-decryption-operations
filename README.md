@@ -2,6 +2,8 @@
 
 This software enables you to transparently encrypt your Dropbox folder on your PC. It also lets you confirm the decryption operations on an Android smartphone, which is used as an NFC-enabled token. Additionally, it supports sharing files with other Dropbox users, while still encrypting the shared data.
 
+![Alt text](https://cdn.rawgit.com/eriknellessen/user-controlled-decryption-operations/master/svg/ucdo-setup.svg "Overview of the involved components")
+
 Warning: This is just proof-of-concept code and should _NOT_ be used in production environments
 
 # Tested platforms:

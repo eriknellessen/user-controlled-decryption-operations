@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink= "http://www.w3.org/1999/xlink">
+	<image x="0" y="0" width="80" height="80" xlink:href="pc.svg" />
+	<text x="0" y="90" style="font-size:10px">PC running <a xlink:href="https://github.com/eriknellessen/encrypting-cloud-storages/tree/user-controlled-decryption-operations" target="_blank">fuseecs</a>
+		<tspan x="0" y="105"> and Dropbox</tspan>
+	</text>
+	<image x="200" y="0" width="80" height="80" xlink:href="scanner.svg" />
+	<text x="200" y="90" style="font-size:10px">NFC smartcard
+		<tspan x="200" y="105">reader</tspan>
+	</text>
+	<line x1="75" y1="45" x2="225" y2="45" style="stroke:rgb(0,0,0);stroke-width:2" />
+	<text x="140" y="55" style="font-size:10px">USB</text>
+	<image x="400" y="0" width="80" height="80" xlink:href="handheld.svg" />
+	<text x="400" y="90" style="font-size:10px">Android smartphone
+		<tspan x="400" y="105">running <a xlink:href="https://github.com/eriknellessen/user-controlled-decryption-operations/tree/master/Android" target="_blank">the app</a></tspan>
+	</text>
+	<image x="300" y="30" width="75" height="80" xlink:href="Feynman-wave.svg" />
+	<text x="330" y="90" style="font-size:10px">NFC</text>
+</svg>
