@@ -6,6 +6,8 @@ This software enables you to transparently encrypt your Dropbox folder on your P
 
 Warning: This is just proof-of-concept code and should _NOT_ be used in production environments
 
+The associated master's thesis can be found here: http://sar.informatik.hu-berlin.de/research/publications/SAR-PR-2016-01/SAR-PR-2016-01_.pdf
+
 # Tested platforms:
 
 * Debian Jessie (32 Bit) and Android Lollipop (5.0)
