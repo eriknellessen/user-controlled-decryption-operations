@@ -5,3 +5,6 @@
 	path = encrypting-cloud-storages
 	url = https://github.com/eriknellessen/encrypting-cloud-storages.git
 	branch = user-controlled-decryption-operations
+[submodule "Android/jcardsim"]
+	path = Android/jcardsim
+	url = https://github.com/eriknellessen/jcardsim.git
