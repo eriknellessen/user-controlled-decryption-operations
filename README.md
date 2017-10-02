@@ -32,7 +32,7 @@ To install the Android App on your smartphone, connect it to your PC, enable deb
 
 ```sh
 cd Android
-make install
+./gradlew installDebug
 ```
 
 ### Setup
