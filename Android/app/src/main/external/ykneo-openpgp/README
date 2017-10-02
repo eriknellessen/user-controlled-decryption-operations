@@ -1,0 +1,40 @@
+== YubiKey NEO App: OpenPGP
+
+[IMPORTANT]
+====
+Yubico has learned of a security issue with the OpenPGP Card applet project that is used in the YubiKey NEO. This vulnerability applies to you only if you are using OpenPGP, and you have the OpenPGP applet version 1.0.9 or earlier.
+link:https://developers.yubico.com/ykneo-openpgp/SecurityAdvisory%202015-04-14.html[SecurityAdvisory 2015-04-14]
+====
+
+This project implement the OpenPGP card functionality used on the
+YubiKey NEO device that is sold by Yubico.
+
+This project is based on the 
+http://sourceforge.net/p/javacardopenpgp/[Java Card OpenPGP Card]
+project made by Joeri de Ruiter. 
+The initial modifications we have made compared to
+the upstream project are minor, but we reserve the right to make other
+changes and improvements that are specific to the YubiKey NEO
+hardware.
+
+=== License
+
+The upstream project was released under the GPLv2+ and our fork uses
+the same license.  All of our changes are released under the same
+license.  See the file LICENSE for more information.
+
+
+=== Building
+
+See doc/Building.txt for information on how to build the source code
+and doc/InstallCAPFile.txt on how to install it.
+
+
+=== Usage
+
+The OpenPGP Card applet is typically used through http://www.gnupg.org[GnuPG]
+so we refer to its documentation for the full reference.
+
+We have tutorials on specific topics in at
+https://developers.yubico.com/PGP[developers.yubico.com/PGP], for example card
+editing and key import.

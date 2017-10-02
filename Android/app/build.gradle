@@ -1,0 +1,46 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 25
+    buildToolsVersion "25.0.1"
+    defaultConfig {
+        applicationId "de.nellessen.usercontrolleddecryptionoperations"
+        minSdkVersion 19
+        targetSdkVersion 25
+        versionCode 1
+        versionName "0.1"
+        testInstrumentationRunner
+            "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                'proguard-rules.pro'
+        }
+    }
+    sourceSets {
+        main.java.srcDirs += 'src/main/external/ykneo-openpgp/applet/src'
+	}
+	lintOptions {
+          abortOnError false
+	}
+}
+
+repositories {
+	mavenLocal()
+}
+
+dependencies {
+    compile 'com.licel:jcardsim:3.0.4-SNAPSHOT'
+}
+
+task buildJcardSim(type:Exec) {
+  workingDir 'src/main/external/jcardsim'
+
+  commandLine 'mvn'
+  
+  args 'clean', 'install'
+}
+
+preBuild.dependsOn buildJcardSim
