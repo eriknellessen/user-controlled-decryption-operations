@@ -35,6 +35,16 @@ dependencies {
     compile 'com.licel:jcardsim:3.0.4-SNAPSHOT'
 }
 
+task gitSubmodules(type:Exec) {
+  workingDir '../'
+
+  commandLine 'git'
+  
+  args 'submodule', 'update', '--init'
+}
+
+preBuild.dependsOn gitSubmodules
+
 task buildJcardSim(type:Exec) {
   workingDir 'src/main/external/jcardsim'
 
@@ -43,4 +53,5 @@ task buildJcardSim(type:Exec) {
   args 'clean', 'install'
 }
 
+buildJcardSim.dependsOn gitSubmodules
 preBuild.dependsOn buildJcardSim
