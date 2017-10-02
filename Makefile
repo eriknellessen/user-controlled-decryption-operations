@@ -2,7 +2,8 @@
 all: android_app encrypting_cloud_storages
 
 android_app:
-	make -C Android
+	cd Android ;\
+	./gradlew clean build
 
 encrypting_cloud_storages:
 	git submodule init

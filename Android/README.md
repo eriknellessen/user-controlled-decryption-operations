@@ -13,14 +13,14 @@ Warning: This is just proof-of-concept code and should _NOT_ be used in producti
 To build the software, execute the following commands:
 
 ```sh
-make
+./gradlew clean build
 ```
 # Installing
 
 To install the Android App on your smartphone, connect it to your PC, enable debugging and execute the following command:
 
 ```sh
-make install
+./gradlew installDebug
 ```
 
 # Using
