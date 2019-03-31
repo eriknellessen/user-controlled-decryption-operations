@@ -32,7 +32,9 @@ repositories {
 }
 
 dependencies {
-    compile fileTree(dir: "src/main/external/jcardsim/target", include: "jcardsim-3.0.4-SNAPSHOT.jar")
+    compile files("src/main/external/jcardsim/target/jcardsim-3.0.4-SNAPSHOT.jar") {
+        builtBy 'buildJcardSim'
+    }
 }
 
 task gitSubmodules(type:Exec) {
