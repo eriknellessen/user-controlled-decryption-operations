@@ -32,7 +32,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.licel:jcardsim:3.0.4-SNAPSHOT'
+    compile fileTree(dir: "src/main/external/jcardsim/target", include: "jcardsim-3.0.4-SNAPSHOT.jar")
 }
 
 task gitSubmodules(type:Exec) {
