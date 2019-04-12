@@ -26,7 +26,11 @@ make
 
 ## Android App
 
-You can download the apk at [F-Droid](https://f-droid.org/packages/de.nellessen.usercontrolleddecryptionoperations/). Otherwise, follow the instructions below:
+[<img src="https://f-droid.org/badge/get-it-on.png"
+      alt="Get it on F-Droid"
+      height="80">](https://f-droid.org/app/de.nellessen.usercontrolleddecryptionoperations)
+
+You can install the app using the F-Droid app, download the apk by clicking on the F-Droid badge or build the app yourself by following the instructions below.
 
 ### Installing
 
