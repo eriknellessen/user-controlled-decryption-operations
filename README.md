@@ -26,6 +26,8 @@ make
 
 ## Android App
 
+You can download the apk at [F-Droid](https://f-droid.org/packages/de.nellessen.usercontrolleddecryptionoperations/). Otherwise, follow the instructions below:
+
 ### Installing
 
 To install the Android App on your smartphone, connect it to your PC, enable debugging and execute the following command:
