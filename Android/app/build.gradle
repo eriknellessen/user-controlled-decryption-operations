@@ -35,6 +35,7 @@ dependencies {
     compile files("src/main/external/jcardsim/target/jcardsim-3.0.4-SNAPSHOT.jar") {
         builtBy 'buildJcardSim'
     }
+    testCompile 'junit:junit:4.13.2'
 }
 
 task gitSubmodules(type:Exec) {
@@ -57,3 +58,10 @@ task buildJcardSim(type:Exec) {
 
 buildJcardSim.dependsOn gitSubmodules
 preBuild.dependsOn buildJcardSim
+
+tasks.withType(Test) {
+    useJUnit()
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
