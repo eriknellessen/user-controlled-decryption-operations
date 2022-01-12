@@ -11,6 +11,7 @@ image: openjdk:8-jdk
 stages:
   - build
   - test
+  - visualize
 
 include:
   - template: Code-Quality.gitlab-ci.yml
@@ -90,7 +91,10 @@ debugTests:
   stage: test
   script:
     - cd Android/
-    - ./gradlew -Pci --console=plain :app:testDebug
+    - ./gradlew -Pci --console=plain :app:testDebugUnitTest :app:testDebugUnitTestCoverage
+  artifacts:
+    paths:
+      - Android/app/build/reports/jacoco/testDebugUnitTestCoverage/
 
 code_quality:
   before_script:
@@ -100,3 +104,19 @@ code_quality:
     REPORT_FORMAT: html
   artifacts:
     paths: [gl-code-quality-report.html]
+
+debugCoverage:
+  before_script:
+    - ''
+  # Must be in a stage later than test stage.
+  # The `visualize` stage does not exist by default.
+  # Please define it first, or chose an existing stage like `deploy`.
+  stage: visualize
+  image: registry.gitlab.com/haynes/jacoco2cobertura:1.0.7
+  script:
+    # convert report from jacoco to cobertura, using relative project path
+    - python /opt/cover2cover.py $CI_PROJECT_DIR/Android/app/build/reports/jacoco/testDebugUnitTestCoverage/testDebugUnitTestCoverage.xml $CI_PROJECT_DIR/Android/app/src/main/java/ > $CI_PROJECT_DIR/Android/app/build/cobertura.xml
+  needs: ["debugTests"]
+  artifacts:
+    reports:
+      cobertura: $CI_PROJECT_DIR/Android/app/build/cobertura.xml
