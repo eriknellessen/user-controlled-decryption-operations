@@ -116,6 +116,8 @@ debugCoverage:
   script:
     # convert report from jacoco to cobertura, using relative project path
     - python /opt/cover2cover.py $CI_PROJECT_DIR/Android/app/build/reports/jacoco/testDebugUnitTestCoverage/testDebugUnitTestCoverage.xml $CI_PROJECT_DIR/Android/app/src/main/java/ > $CI_PROJECT_DIR/Android/app/build/cobertura.xml
+    # output for GitLab code coverage badge
+    - cat Android/app/build/reports/jacoco/testDebugUnitTestCoverage/html/index.html | grep -o 'Total[^%]*%'
   needs: ["debugTests"]
   artifacts:
     reports:
