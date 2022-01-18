@@ -14,6 +14,8 @@ The associated master's thesis can be found here: http://sar.informatik.hu-berli
 
 # Building
 
+[![Build Status](https://gitlab.com/eriknellessen/user-controlled-decryption-operations/badges/master/pipeline.svg)](https://gitlab.com/eriknellessen/user-controlled-decryption-operations/-/pipelines?ref=master) [![Code Coverage](https://gitlab.com/eriknellessen/user-controlled-decryption-operations/badges/master/coverage.svg)](https://gitlab.com/eriknellessen/user-controlled-decryption-operations/-/pipelines?ref=master)
+
 To build the software, execute the following commands:
 
 ```sh
