@@ -14,7 +14,7 @@ The associated master's thesis can be found here: http://sar.informatik.hu-berli
 
 # Building
 
-[![Build Status](https://gitlab.com/eriknellessen/user-controlled-decryption-operations/badges/master/pipeline.svg)](https://gitlab.com/eriknellessen/user-controlled-decryption-operations/-/pipelines?ref=master) [![Code Coverage](https://gitlab.com/eriknellessen/user-controlled-decryption-operations/badges/master/coverage.svg)](https://gitlab.com/eriknellessen/user-controlled-decryption-operations/-/pipelines?ref=master) [![Code Quality](https://img.shields.io/badge/code%20quality-download%20report-blue)](https://gitlab.com/api/v4/projects/15583750/jobs/artifacts/master/download?job=code_quality)
+[![Build Status](https://gitlab.com/eriknellessen/user-controlled-decryption-operations/badges/master/pipeline.svg)](https://gitlab.com/eriknellessen/user-controlled-decryption-operations/-/pipelines?ref=master) [![Code Coverage](https://gitlab.com/eriknellessen/user-controlled-decryption-operations/badges/master/coverage.svg)](https://gitlab.com/api/v4/projects/15583750/jobs/artifacts/master/download?job=debugTests) [![Code Quality](https://img.shields.io/badge/code%20quality-download%20report-blue)](https://gitlab.com/api/v4/projects/15583750/jobs/artifacts/master/download?job=code_quality)
 
 To build the software, execute the following commands:
 
